@@ -80,6 +80,47 @@ class Scanner {
 					pos++;
 					add(TkSemicolon);
 
+				case "*".code:
+					pos++;
+					add(TkAsterisk);
+
+				case "/".code:
+					pos++;
+					if (pos < end) {
+						switch text.fastCodeAt(pos) {
+							case "/".code:
+								pos++;
+								while (pos < end) {
+									var ch = text.fastCodeAt(pos);
+									if (ch == "\r".code || ch == "\n".code)
+										break;
+									pos++;
+								}
+								add(TkLineComment);
+
+							case "*".code:
+								pos++;
+								var doc = false;
+								if (pos < end && text.fastCodeAt(pos) == "*".code) {
+									doc = true;
+									pos++;
+								}
+								while (pos < end) {
+									if (text.fastCodeAt(pos) == "*".code && pos + 1 < end && text.fastCodeAt(pos + 1) == "/".code) {
+										pos += 2;
+										break;
+									}
+									pos++;
+								}
+								add(if (doc) TkDocComment else TkBlockComment);
+
+							case _:
+								add(TkSlash);
+						}
+					} else {
+						add(TkSlash);
+					}
+
 				case _ if (isIdentStart(ch)):
 					pos++;
 					while (pos < end) {

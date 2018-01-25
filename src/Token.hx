@@ -22,6 +22,11 @@ enum TokenKind {
 	TkSemicolon;
 	TkDot;
 	TkComma;
+	TkSlash;
+	TkAsterisk;
 	TkInvalid;
+	TkLineComment;
+	TkBlockComment;
+	TkDocComment;
 	TkEof;
 }
