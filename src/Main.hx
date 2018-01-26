@@ -19,6 +19,7 @@ enum Expr {
 	ECall(expr:Expr, args:Array<Expr>);
 	EParen(expr:Expr);
 	EField(expr:Expr, field:String);
+	EIf(cond:Expr, then:Expr, eelse:Null<Expr>);
 }
 
 class Main implements ParserHandler<Expr> {
@@ -63,6 +64,14 @@ class Main implements ParserHandler<Expr> {
 
 	public function field(expr:Expr, dotToken:TokenInfo, fieldToken:TokenInfo):Expr {
 		return EField(expr, fieldToken.token.text);
+	}
+
+	public function if_(ifToken:TokenInfo, openParenToken:TokenInfo, condition:Expr, closeParenToken:TokenInfo, thenBody:Expr):Expr {
+		return EIf(condition, thenBody, null);
+	}
+
+	public function ifElse(ifToken:TokenInfo, openParenToken:TokenInfo, condition:Expr, closeParenToken:TokenInfo, thenBody:Expr, elseToken:TokenInfo, elseBody:Expr):Expr {
+		return EIf(condition, thenBody, elseBody);
 	}
 
 	static function main() {

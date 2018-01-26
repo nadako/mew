@@ -16,6 +16,8 @@ interface ParserHandler<TExpr> {
 	function call(callee:TExpr, openParenToken:TokenInfo, args:CommaSeparated<TExpr>, closeParenToken:TokenInfo):TExpr;
 	function paren(openParenToken:TokenInfo, expr:TExpr, closeParenToken:TokenInfo):TExpr;
 	function field(expr:TExpr, dotToken:TokenInfo, fieldToken:TokenInfo):TExpr;
+	function if_(ifToken:TokenInfo, openParenToken:TokenInfo, condition:TExpr, closeParenToken:TokenInfo, thenBody:TExpr):TExpr;
+	function ifElse(ifToken:TokenInfo, openParenToken:TokenInfo, condition:TExpr, closeParenToken:TokenInfo, thenBody:TExpr, elseToken:TokenInfo, elseBody:TExpr):TExpr;
 }
 
 typedef CommaSeparated<T> = Null<{head:T, tail:Array<{comma:TokenInfo, value:T}>}>;
@@ -40,6 +42,21 @@ class Parser<TExpr> {
 				return parseExprNext(handler.string(consume()));
 			case {kind: TkInteger}:
 				return parseExprNext(handler.integer(consume()));
+			case {kind: TkIdent, text: "if"}:
+				var ifToken = consume();
+				var parenOpenToken = expect(t -> t.kind == TkParenOpen);
+				var condition = parseExpr();
+				var parenCloseToken = expect(t -> t.kind == TkParenClose);
+				var then = parseExpr();
+				switch advance() {
+					case {kind: TkIdent, text: "else"}:
+						var elseToken = consume();
+						var elseBody = parseExpr();
+						return handler.ifElse(ifToken, parenOpenToken, condition, parenCloseToken, then, elseToken, elseBody);
+					case _:
+						return handler.if_(ifToken, parenOpenToken, condition, parenCloseToken, then);
+				}
+
 			case {kind: TkIdent}:
 				return parseExprNext(handler.ident(consume()));
 			case {kind: TkParenOpen}:
