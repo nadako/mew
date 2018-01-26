@@ -16,6 +16,7 @@ enum Expr {
 	ELiteral(literal:Literal);
 	EIdent(ident:String);
 	EBinop(op:Binop, a:Expr, b:Expr);
+	ECall(expr:Expr);
 }
 
 class Main implements ParserHandler<Expr> {
@@ -47,6 +48,10 @@ class Main implements ParserHandler<Expr> {
 
 	public function div(a:Expr, plusToken:TokenInfo, b:Expr):Expr {
 		return EBinop(OpDiv, a, b);
+	}
+
+	public function call(callee:Expr, openParenToken:TokenInfo, closeParenToken:TokenInfo):Expr {
+		return ECall(callee);
 	}
 
 	static function main() {

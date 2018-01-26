@@ -13,6 +13,7 @@ interface ParserHandler<TExpr> {
 	function sub(a:TExpr, plusToken:TokenInfo, b:TExpr):TExpr;
 	function mul(a:TExpr, plusToken:TokenInfo, b:TExpr):TExpr;
 	function div(a:TExpr, plusToken:TokenInfo, b:TExpr):TExpr;
+	function call(callee:TExpr, openParenToken:TokenInfo, closeParenToken:TokenInfo):TExpr;
 }
 
 class Parser<TExpr> {
@@ -62,6 +63,10 @@ class Parser<TExpr> {
 				var slashToken = consume();
 				var rightHand = parseExpr();
 				return handler.div(leftHand, slashToken, rightHand);
+			case {kind: TkParenOpen}:
+				var openParenToken = consume();
+				var closeParenToken = expect(t -> t.kind == TkParenClose);
+				return parseExprNext(handler.call(leftHand, openParenToken, closeParenToken));
 			case _:
 				return leftHand;
 		}
