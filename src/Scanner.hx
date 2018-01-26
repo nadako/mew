@@ -80,6 +80,14 @@ class Scanner {
 					pos++;
 					add(TkSemicolon);
 
+				case "+".code:
+					pos++;
+					add(TkPlus);
+
+				case "-".code:
+					pos++;
+					add(TkMinus);
+
 				case "*".code:
 					pos++;
 					add(TkAsterisk);
@@ -120,6 +128,12 @@ class Scanner {
 					} else {
 						add(TkSlash);
 					}
+
+				case "1".code | "2".code | "3".code | "4".code | "5".code | "6".code | "7".code | "8".code | "9".code:
+					pos++;
+					while (pos < end && isNumber(text.fastCodeAt(pos)))
+						pos++;
+					add(TkInteger);
 
 				case _ if (isIdentStart(ch)):
 					pos++;
