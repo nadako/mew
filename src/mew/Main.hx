@@ -1,6 +1,7 @@
 package mew;
 
 import mew.parsing.Parser;
+import mew.parsing.TokenInfo;
 import mew.lexing.Scanner;
 
 enum Literal {

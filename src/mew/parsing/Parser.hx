@@ -2,13 +2,6 @@ package mew.parsing;
 
 import mew.lexing.Token;
 
-class TokenInfo {
-	public var token:Token;
-	public var leadTrivia:Array<Token>;
-	public var trailTrivia:Array<Token>;
-	public function new() {}
-}
-
 interface ParserHandler<TExpr> {
 	function string(token:TokenInfo):TExpr;
 	function integer(token:TokenInfo):TExpr;
