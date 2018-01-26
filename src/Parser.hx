@@ -18,6 +18,7 @@ interface ParserHandler<TExpr> {
 	function field(expr:TExpr, dotToken:TokenInfo, fieldToken:TokenInfo):TExpr;
 	function if_(ifToken:TokenInfo, openParenToken:TokenInfo, condition:TExpr, closeParenToken:TokenInfo, thenBody:TExpr):TExpr;
 	function ifElse(ifToken:TokenInfo, openParenToken:TokenInfo, condition:TExpr, closeParenToken:TokenInfo, thenBody:TExpr, elseToken:TokenInfo, elseBody:TExpr):TExpr;
+	function block(openBraceToken:TokenInfo, exprs:Array<{expr:TExpr, semicolon:TokenInfo}>, closeBraceToken:TokenInfo):TExpr;
 }
 
 typedef CommaSeparated<T> = Null<{head:T, tail:Array<{comma:TokenInfo, value:T}>}>;
@@ -64,8 +65,19 @@ class Parser<TExpr> {
 				var expr = parseExpr();
 				var parenCloseToken = expect(t -> t.kind == TkParenClose);
 				return parseExprNext(handler.paren(parenOpenToken, expr, parenCloseToken));
+			case {kind: TkBraceOpen}:
+				var braceOpenToken = consume();
+				var contents = [];
+				while (true) {
+					var expr = parse();
+					if (expr == null)
+						break;
+					var semicolon = expect(t -> t.kind == TkSemicolon);
+					contents.push({expr: expr, semicolon: semicolon});
+				}
+				var braceCloseToken = expect(t -> t.kind == TkBraceClose);
+				return handler.block(braceOpenToken, contents, braceCloseToken);
 			case _:
-				trace(token);
 				return null;
 		}
 	}

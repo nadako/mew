@@ -20,6 +20,7 @@ enum Expr {
 	EParen(expr:Expr);
 	EField(expr:Expr, field:String);
 	EIf(cond:Expr, then:Expr, eelse:Null<Expr>);
+	EBlock(exprs:Array<Expr>);
 }
 
 class Main implements ParserHandler<Expr> {
@@ -72,6 +73,10 @@ class Main implements ParserHandler<Expr> {
 
 	public function ifElse(ifToken:TokenInfo, openParenToken:TokenInfo, condition:Expr, closeParenToken:TokenInfo, thenBody:Expr, elseToken:TokenInfo, elseBody:Expr):Expr {
 		return EIf(condition, thenBody, elseBody);
+	}
+
+	public function block(openBraceToken:TokenInfo, exprs:Array<{expr:Expr, semicolon:TokenInfo}>, closeBraceToken:TokenInfo):Expr {
+		return EBlock(exprs.map(e -> e.expr));
 	}
 
 	static function main() {
