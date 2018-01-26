@@ -1,35 +1,70 @@
-class Parser {
+class TokenInfo {
+	public var token:Token;
+	public var leadTrivia:Array<Token>;
+	public var trailTrivia:Array<Token>;
+	public function new() {}
+}
+
+interface ParserHandler<TExpr> {
+	function string(token:TokenInfo):TExpr;
+	function integer(token:TokenInfo):TExpr;
+	function ident(token:TokenInfo):TExpr;
+	function add(a:TExpr, plusToken:TokenInfo, b:TExpr):TExpr;
+	function sub(a:TExpr, plusToken:TokenInfo, b:TExpr):TExpr;
+	function mul(a:TExpr, plusToken:TokenInfo, b:TExpr):TExpr;
+	function div(a:TExpr, plusToken:TokenInfo, b:TExpr):TExpr;
+}
+
+class Parser<TExpr> {
 	var head:Token;
 	var trivia:Array<Token>;
+	var handler:ParserHandler<TExpr>;
 
-	public function new(head) {
+	public function new(head, handler) {
 		this.head = head;
+		this.handler = handler;
 		this.trivia = [];
 	}
 
-	public function parse() {
-		switch advance() {
-			case {kind: TkIdent, text: "fun"}:
-				return parseFunction();
+	public function parse() return parseExpr();
+
+	function parseExpr():TExpr {
+		var token = advance();
+		switch token {
+			case {kind: TkString}:
+				return parseExprNext(handler.string(consume()));
+			case {kind: TkInteger}:
+				return parseExprNext(handler.integer(consume()));
+			case {kind: TkIdent}:
+				return parseExprNext(handler.ident(consume()));
 			case _:
+				trace(token);
 				return null;
 		}
 	}
 
-	function parseFunction():SyntaxFunction {
-		var funToken = consume();
-
-		var nameToken = expect(t -> t.kind == TkIdent);
-
-		var openParenToken = expect(t -> t.kind == TkParenOpen);
-		var closeParenToken = expect(t -> t.kind == TkParenClose);
-
-		var node = new SyntaxFunction();
-		node.funToken = funToken;
-		node.nameToken = nameToken;
-		node.openParenToken = openParenToken;
-		node.closeParenToken = closeParenToken;
-		return node;
+	function parseExprNext(leftHand:TExpr):TExpr {
+		var token = advance();
+		switch token {
+			case {kind: TkPlus}:
+				var plusToken = consume();
+				var rightHand = parseExpr();
+				return handler.add(leftHand, plusToken, rightHand);
+			case {kind: TkMinus}:
+				var minusToken = consume();
+				var rightHand = parseExpr();
+				return handler.sub(leftHand, minusToken, rightHand);
+			case {kind: TkAsterisk}:
+				var asteriskToken = consume();
+				var rightHand = parseExpr();
+				return handler.mul(leftHand, asteriskToken, rightHand);
+			case {kind: TkSlash}:
+				var slashToken = consume();
+				var rightHand = parseExpr();
+				return handler.div(leftHand, slashToken, rightHand);
+			case _:
+				return leftHand;
+		}
 	}
 
 	function expect(check):TokenInfo {
@@ -79,19 +114,4 @@ class Parser {
 		}
 		return result;
 	}
-}
-
-class TokenInfo {
-	public var token:Token;
-	public var leadTrivia:Array<Token>;
-	public var trailTrivia:Array<Token>;
-	public function new() {}
-}
-
-class SyntaxFunction {
-	public var funToken:TokenInfo;
-	public var nameToken:TokenInfo;
-	public var openParenToken:TokenInfo;
-	public var closeParenToken:TokenInfo;
-	public function new() {}
 }

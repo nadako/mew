@@ -1,10 +1,1 @@
-/** doc */
-/* hello */
-// hello
-привет
-fun
- main // lol
-() {
-	trace(15+5);
-	trace("hi");
-}
+a + 2 - e / 0 * 8
