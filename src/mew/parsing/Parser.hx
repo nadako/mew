@@ -1,3 +1,7 @@
+package mew.parsing;
+
+import mew.lexing.Token;
+
 class TokenInfo {
 	public var token:Token;
 	public var leadTrivia:Array<Token>;

@@ -1,5 +1,5 @@
 -cp src
--main Main
+-main mew.Main
 -D analyzer-optimize
 -dce full
 -js main.js

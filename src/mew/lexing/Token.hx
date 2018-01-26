@@ -1,3 +1,5 @@
+package mew.lexing;
+
 class Token {
 	public var kind:TokenKind;
 	public var text:String;

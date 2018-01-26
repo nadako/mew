@@ -1,3 +1,5 @@
+package mew.lexing;
+
 using StringTools;
 
 class Scanner {

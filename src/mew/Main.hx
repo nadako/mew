@@ -1,4 +1,7 @@
-import Parser;
+package mew;
+
+import mew.parsing.Parser;
+import mew.lexing.Scanner;
 
 enum Literal {
 	LString(string:String);
