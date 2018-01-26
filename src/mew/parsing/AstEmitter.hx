@@ -51,6 +51,18 @@ class AstEmitter implements Emitter<Expr> {
 		return EIf(condition, thenBody, null);
 	}
 
+	public function while_(whileToken:TokenInfo, openParenToken:TokenInfo, condition:Expr, closeParenToken:TokenInfo, body:Expr):Expr {
+		return EWhile(condition, body);
+	}
+
+	public function break_(token:TokenInfo):Expr {
+		return EBreak;
+	}
+
+	public function continue_(token:TokenInfo):Expr {
+		return EContinue;
+	}
+
 	public function ifElse(ifToken:TokenInfo, openParenToken:TokenInfo, condition:Expr, closeParenToken:TokenInfo, thenBody:Expr, elseToken:TokenInfo, elseBody:Expr):Expr {
 		return EIf(condition, thenBody, elseBody);
 	}

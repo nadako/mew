@@ -20,5 +20,8 @@ enum Expr {
 	EParen(expr:Expr);
 	EField(expr:Expr, field:String);
 	EIf(cond:Expr, then:Expr, eelse:Null<Expr>);
+	EWhile(cond:Expr, body:Expr);
+	EBreak;
+	EContinue;
 	EBlock(exprs:Array<Expr>);
 }

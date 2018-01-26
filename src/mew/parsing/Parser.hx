@@ -37,7 +37,17 @@ class Parser<TExpr> {
 					case _:
 						return emitter.if_(ifToken, parenOpenToken, condition, parenCloseToken, then);
 				}
-
+			case {kind: TkIdent, text: "while"}:
+				var whileToken = consume();
+				var parenOpenToken = expect(t -> t.kind == TkParenOpen);
+				var condition = parseExpr();
+				var parenCloseToken = expect(t -> t.kind == TkParenClose);
+				var body = parseExpr();
+				return emitter.while_(whileToken, parenOpenToken, condition, parenCloseToken, body);
+			case {kind: TkIdent, text: "break"}:
+				return emitter.break_(consume());
+			case {kind: TkIdent, text: "continue"}:
+				return emitter.continue_(consume());
 			case {kind: TkIdent}:
 				return parseExprNext(emitter.ident(consume()));
 			case {kind: TkParenOpen}:

@@ -13,6 +13,9 @@ interface Emitter<TExpr> {
 	function field(expr:TExpr, dotToken:TokenInfo, fieldToken:TokenInfo):TExpr;
 	function if_(ifToken:TokenInfo, openParenToken:TokenInfo, condition:TExpr, closeParenToken:TokenInfo, thenBody:TExpr):TExpr;
 	function ifElse(ifToken:TokenInfo, openParenToken:TokenInfo, condition:TExpr, closeParenToken:TokenInfo, thenBody:TExpr, elseToken:TokenInfo, elseBody:TExpr):TExpr;
+	function while_(whileToken:TokenInfo, openParenToken:TokenInfo, condition:TExpr, closeParenToken:TokenInfo, body:TExpr):TExpr;
+	function break_(token:TokenInfo):TExpr;
+	function continue_(token:TokenInfo):TExpr;
 	function block(openBraceToken:TokenInfo, exprs:Array<{expr:TExpr, semicolon:TokenInfo}>, closeBraceToken:TokenInfo):TExpr;
 }
 
