@@ -14,6 +14,8 @@ interface ParserHandler<TExpr> {
 	function mul(a:TExpr, plusToken:TokenInfo, b:TExpr):TExpr;
 	function div(a:TExpr, plusToken:TokenInfo, b:TExpr):TExpr;
 	function call(callee:TExpr, openParenToken:TokenInfo, args:CommaSeparated<TExpr>, closeParenToken:TokenInfo):TExpr;
+	function paren(openParenToken:TokenInfo, expr:TExpr, closeParenToken:TokenInfo):TExpr;
+	function field(expr:TExpr, dotToken:TokenInfo, fieldToken:TokenInfo):TExpr;
 }
 
 typedef CommaSeparated<T> = Null<{head:T, tail:Array<{comma:TokenInfo, value:T}>}>;
@@ -40,6 +42,11 @@ class Parser<TExpr> {
 				return parseExprNext(handler.integer(consume()));
 			case {kind: TkIdent}:
 				return parseExprNext(handler.ident(consume()));
+			case {kind: TkParenOpen}:
+				var parenOpenToken = consume();
+				var expr = parseExpr();
+				var parenCloseToken = expect(t -> t.kind == TkParenClose);
+				return parseExprNext(handler.paren(parenOpenToken, expr, parenCloseToken));
 			case _:
 				trace(token);
 				return null;
@@ -70,6 +77,10 @@ class Parser<TExpr> {
 				var args = parseCommaSeparated(parseExpr);
 				var closeParenToken = expect(t -> t.kind == TkParenClose);
 				return parseExprNext(handler.call(leftHand, openParenToken, args, closeParenToken));
+			case {kind: TkDot}:
+				var dotToken = consume();
+				var fieldNameToken = expect(t -> t.kind == TkIdent);
+				return parseExprNext(handler.field(leftHand, dotToken, fieldNameToken));
 			case _:
 				return leftHand;
 		}
