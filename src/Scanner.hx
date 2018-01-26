@@ -135,6 +135,21 @@ class Scanner {
 						pos++;
 					add(TkInteger);
 
+				case '"'.code:
+					pos++;
+					while (true) {
+						if (pos >= end) {
+							reportError("Unterminated string");
+							break;
+						}
+						var ch = text.fastCodeAt(pos);
+						pos++;
+						if (ch == '"'.code) {
+							break;
+						}
+					}
+					add(TkString);
+
 				case _ if (isIdentStart(ch)):
 					pos++;
 					while (pos < end) {
@@ -150,6 +165,10 @@ class Scanner {
 					add(TkInvalid);
 			}
 		}
+	}
+
+	inline function reportError(msg:String) {
+		trace(msg);
 	}
 
 	inline function isNumber(ch) {

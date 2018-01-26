@@ -32,6 +32,7 @@ enum TokenKind {
 	TkPlus;
 	TkMinus;
 	TkInteger;
+	TkString;
 	TkInvalid;
 	TkLineComment;
 	TkBlockComment;

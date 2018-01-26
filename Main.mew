@@ -6,4 +6,5 @@ fun
  main // lol
 () {
 	trace(15+5);
+	trace("hi");
 }
