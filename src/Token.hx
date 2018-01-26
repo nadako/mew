@@ -8,6 +8,11 @@ class Token {
 		this.kind = kind;
 		this.text = text;
 	}
+
+	@:keep
+	public function toString() {
+		return '$kind(${haxe.Json.stringify(text)})';
+	}
 }
 
 enum TokenKind {
