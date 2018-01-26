@@ -16,7 +16,7 @@ enum Expr {
 	ELiteral(literal:Literal);
 	EIdent(ident:String);
 	EBinop(op:Binop, a:Expr, b:Expr);
-	ECall(expr:Expr);
+	ECall(expr:Expr, args:Array<Expr>);
 }
 
 class Main implements ParserHandler<Expr> {
@@ -50,8 +50,9 @@ class Main implements ParserHandler<Expr> {
 		return EBinop(OpDiv, a, b);
 	}
 
-	public function call(callee:Expr, openParenToken:TokenInfo, closeParenToken:TokenInfo):Expr {
-		return ECall(callee);
+	public function call(callee:Expr, openParenToken:TokenInfo, args:CommaSeparated<Expr>, closeParenToken:TokenInfo):Expr {
+		var callArgs = if (args == null) [] else [args.head].concat(args.tail.map(e -> e.value));
+		return ECall(callee, callArgs);
 	}
 
 	static function main() {

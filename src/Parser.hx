@@ -13,8 +13,10 @@ interface ParserHandler<TExpr> {
 	function sub(a:TExpr, plusToken:TokenInfo, b:TExpr):TExpr;
 	function mul(a:TExpr, plusToken:TokenInfo, b:TExpr):TExpr;
 	function div(a:TExpr, plusToken:TokenInfo, b:TExpr):TExpr;
-	function call(callee:TExpr, openParenToken:TokenInfo, closeParenToken:TokenInfo):TExpr;
+	function call(callee:TExpr, openParenToken:TokenInfo, args:CommaSeparated<TExpr>, closeParenToken:TokenInfo):TExpr;
 }
+
+typedef CommaSeparated<T> = Null<{head:T, tail:Array<{comma:TokenInfo, value:T}>}>;
 
 class Parser<TExpr> {
 	var head:Token;
@@ -65,11 +67,33 @@ class Parser<TExpr> {
 				return handler.div(leftHand, slashToken, rightHand);
 			case {kind: TkParenOpen}:
 				var openParenToken = consume();
+				var args = parseCommaSeparated(parseExpr);
 				var closeParenToken = expect(t -> t.kind == TkParenClose);
-				return parseExprNext(handler.call(leftHand, openParenToken, closeParenToken));
+				return parseExprNext(handler.call(leftHand, openParenToken, args, closeParenToken));
 			case _:
 				return leftHand;
 		}
+	}
+
+	function parseCommaSeparated(parse:()->TExpr):CommaSeparated<TExpr> {
+		var head = parse();
+		if (head == null)
+			return null;
+		var tail = [];
+		while (true) {
+			var token = advance();
+			switch token {
+				case {kind: TkComma}:
+					var comma = consume();
+					var expr = parse();
+					if (expr == null)
+						break;
+					tail.push({comma: comma, value: expr});
+				case _:
+					break;
+			}
+		}
+		return {head: head, tail: tail};
 	}
 
 	function expect(check):TokenInfo {
