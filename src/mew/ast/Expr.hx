@@ -25,4 +25,9 @@ enum Expr {
 	EBreak;
 	EContinue;
 	EBlock(exprs:Array<Expr>);
+	EVar(pattern:Pattern, value:Expr);
+}
+
+enum Pattern {
+	PName(name:String);
 }

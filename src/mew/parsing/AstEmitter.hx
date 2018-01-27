@@ -3,7 +3,7 @@ package mew.parsing;
 import mew.ast.Expr;
 import mew.parsing.Emitter;
 
-class AstEmitter implements Emitter<Expr> {
+class AstEmitter implements Emitter<Expr,Pattern> {
 	public function new() {}
 
 	public function string(token:TokenInfo):Expr {
@@ -73,5 +73,13 @@ class AstEmitter implements Emitter<Expr> {
 
 	public function block(openBraceToken:TokenInfo, exprs:Array<{expr:Expr, semicolon:TokenInfo}>, closeBraceToken:TokenInfo):Expr {
 		return EBlock(exprs.map(e -> e.expr));
+	}
+
+	public function var_(varToken:TokenInfo, pattern:Pattern, equalsToken:TokenInfo, value:Expr):Expr {
+		return EVar(pattern, value);
+	}
+
+	public function patternName(nameToken:TokenInfo):Pattern {
+		return PName(nameToken.token.text);
 	}
 }

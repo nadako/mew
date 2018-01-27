@@ -3,10 +3,10 @@ package mew.parsing;
 import mew.lexing.Token;
 import mew.parsing.Emitter;
 
-class Parser<TExpr> {
+class Parser<TExpr,TPattern> {
 	var head:Token;
 	var trivia:Array<Token>;
-	var emitter:Emitter<TExpr>;
+	var emitter:Emitter<TExpr,TPattern>;
 
 	public function new(head, emitter) {
 		this.head = head;
@@ -23,6 +23,12 @@ class Parser<TExpr> {
 				return parseExprNext(emitter.string(consume()));
 			case {kind: TkInteger}:
 				return parseExprNext(emitter.integer(consume()));
+			case {kind: TkIdent, text: "var"}:
+				var varToken = consume();
+				var pattern = parsePattern();
+				var equalsToken = expect(t -> t.kind == TkEquals);
+				var expr = parseExpr();
+				return emitter.var_(varToken, pattern, equalsToken, expr);
 			case {kind: TkIdent, text: "if"}:
 				var ifToken = consume();
 				var parenOpenToken = expect(t -> t.kind == TkParenOpen);
@@ -106,6 +112,15 @@ class Parser<TExpr> {
 				return emitter.assign(leftHand, equalsToken, rightHand);
 			case _:
 				return leftHand;
+		}
+	}
+
+	function parsePattern():TPattern {
+		switch advance() {
+			case {kind: TkIdent}:
+				return emitter.patternName(consume());
+			case _:
+				return null;
 		}
 	}
 

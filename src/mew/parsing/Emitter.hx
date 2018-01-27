@@ -1,6 +1,6 @@
 package mew.parsing;
 
-interface Emitter<TExpr> {
+interface Emitter<TExpr,TPattern> {
 	function string(token:TokenInfo):TExpr;
 	function integer(token:TokenInfo):TExpr;
 	function ident(token:TokenInfo):TExpr;
@@ -18,6 +18,9 @@ interface Emitter<TExpr> {
 	function break_(token:TokenInfo):TExpr;
 	function continue_(token:TokenInfo):TExpr;
 	function block(openBraceToken:TokenInfo, exprs:Array<{expr:TExpr, semicolon:TokenInfo}>, closeBraceToken:TokenInfo):TExpr;
+	function var_(varToken:TokenInfo, pattern:TPattern, equalsToken:TokenInfo, value:TExpr):TExpr;
+
+	function patternName(nameToken:TokenInfo):TPattern;
 }
 
 typedef CommaSeparated<T> = Null<{head:T, tail:Array<{comma:TokenInfo, value:T}>}>;
