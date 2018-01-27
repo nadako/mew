@@ -90,6 +90,10 @@ class Scanner {
 					pos++;
 					add(TkMinus);
 
+				case "=".code:
+					pos++;
+					add(TkEquals);
+
 				case "*".code:
 					pos++;
 					add(TkAsterisk);

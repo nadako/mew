@@ -22,16 +22,20 @@ class AstEmitter implements Emitter<Expr> {
 		return EBinop(OpAdd, a, b);
 	}
 
-	public function sub(a:Expr, plusToken:TokenInfo, b:Expr):Expr {
+	public function sub(a:Expr, minusToken:TokenInfo, b:Expr):Expr {
 		return EBinop(OpSub, a, b);
 	}
 
-	public function mul(a:Expr, plusToken:TokenInfo, b:Expr):Expr {
+	public function mul(a:Expr, asteriskToken:TokenInfo, b:Expr):Expr {
 		return EBinop(OpMul, a, b);
 	}
 
-	public function div(a:Expr, plusToken:TokenInfo, b:Expr):Expr {
+	public function div(a:Expr, slashToken:TokenInfo, b:Expr):Expr {
 		return EBinop(OpDiv, a, b);
+	}
+
+	public function assign(a:Expr, equalsToken:TokenInfo, b:Expr):Expr {
+		return EBinop(OpAssign, a, b);
 	}
 
 	public function paren(openParenToken:TokenInfo, expr:Expr, closeParenToken:TokenInfo):Expr {

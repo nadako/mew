@@ -100,6 +100,10 @@ class Parser<TExpr> {
 				var dotToken = consume();
 				var fieldNameToken = expect(t -> t.kind == TkIdent);
 				return parseExprNext(emitter.field(leftHand, dotToken, fieldNameToken));
+			case {kind: TkEquals}:
+				var equalsToken = consume();
+				var rightHand = parseExpr();
+				return emitter.assign(leftHand, equalsToken, rightHand);
 			case _:
 				return leftHand;
 		}

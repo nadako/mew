@@ -10,6 +10,7 @@ enum Binop {
 	OpSub;
 	OpMul;
 	OpDiv;
+	OpAssign;
 }
 
 enum Expr {

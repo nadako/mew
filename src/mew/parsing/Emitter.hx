@@ -5,9 +5,10 @@ interface Emitter<TExpr> {
 	function integer(token:TokenInfo):TExpr;
 	function ident(token:TokenInfo):TExpr;
 	function add(a:TExpr, plusToken:TokenInfo, b:TExpr):TExpr;
-	function sub(a:TExpr, plusToken:TokenInfo, b:TExpr):TExpr;
-	function mul(a:TExpr, plusToken:TokenInfo, b:TExpr):TExpr;
-	function div(a:TExpr, plusToken:TokenInfo, b:TExpr):TExpr;
+	function sub(a:TExpr, minusToken:TokenInfo, b:TExpr):TExpr;
+	function mul(a:TExpr, asteriskToken:TokenInfo, b:TExpr):TExpr;
+	function div(a:TExpr, slashToken:TokenInfo, b:TExpr):TExpr;
+	function assign(a:TExpr, equalsToken:TokenInfo, b:TExpr):TExpr;
 	function call(callee:TExpr, openParenToken:TokenInfo, args:CommaSeparated<TExpr>, closeParenToken:TokenInfo):TExpr;
 	function paren(openParenToken:TokenInfo, expr:TExpr, closeParenToken:TokenInfo):TExpr;
 	function field(expr:TExpr, dotToken:TokenInfo, fieldToken:TokenInfo):TExpr;

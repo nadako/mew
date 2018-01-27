@@ -33,6 +33,7 @@ enum TokenKind {
 	TkAsterisk;
 	TkPlus;
 	TkMinus;
+	TkEquals;
 	TkInteger;
 	TkString;
 	TkInvalid;
