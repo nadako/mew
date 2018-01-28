@@ -23,6 +23,18 @@ class Parser<TExpr,TPattern> {
 				return parseExprNext(emitter.string(consume()));
 			case {kind: TkInteger}:
 				return parseExprNext(emitter.integer(consume()));
+			case {kind: TkIdent, text: "fun"}:
+				var funToken = consume();
+				var nameToken =
+					switch advance() {
+						case {kind: TkIdent}: consume();
+						case _: null;
+					}
+				var parenOpenToken = expect(t -> t.kind == TkParenOpen);
+				var args = parseCommaSeparated(parseFunctionArg);
+				var parenCloseToken = expect(t -> t.kind == TkParenClose);
+				var expr = parseExpr();
+				return emitter.fun(funToken, nameToken, parenOpenToken, args, parenCloseToken, expr);
 			case {kind: TkIdent, text: "var"}:
 				var varToken = consume();
 				var pattern = parsePattern();
@@ -124,7 +136,12 @@ class Parser<TExpr,TPattern> {
 		}
 	}
 
-	function parseCommaSeparated(parse:()->TExpr):CommaSeparated<TExpr> {
+	function parseFunctionArg():FunctionArg<TPattern> {
+		var pattern = parsePattern();
+		return {pattern: pattern};
+	}
+
+	function parseCommaSeparated<TRet>(parse:()->TRet):CommaSeparated<TRet> {
 		var head = parse();
 		if (head == null)
 			return null;

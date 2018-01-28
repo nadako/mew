@@ -79,6 +79,14 @@ class AstEmitter implements Emitter<Expr,Pattern> {
 		return EVar(pattern, value);
 	}
 
+	public function fun(funToken:TokenInfo, nameToken:Null<TokenInfo>, openParenToken:TokenInfo, args:CommaSeparated<Emitter.FunctionArg<Pattern>>, closeParenToken:TokenInfo, expr:Expr):Expr {
+		var args = if (args == null) [] else [args.head].concat(args.tail.map(e -> e.value));
+		return EFun(if (nameToken != null) nameToken.token.text else null, {
+			args: args,
+			body: expr,
+		});
+	}
+
 	public function patternName(nameToken:TokenInfo):Pattern {
 		return PName(nameToken.token.text);
 	}

@@ -19,8 +19,13 @@ interface Emitter<TExpr,TPattern> {
 	function continue_(token:TokenInfo):TExpr;
 	function block(openBraceToken:TokenInfo, exprs:Array<{expr:TExpr, semicolon:TokenInfo}>, closeBraceToken:TokenInfo):TExpr;
 	function var_(varToken:TokenInfo, pattern:TPattern, equalsToken:TokenInfo, value:TExpr):TExpr;
+	function fun(funToken:TokenInfo, nameToken:Null<TokenInfo>, openParenToken:TokenInfo, args:CommaSeparated<FunctionArg<TPattern>>, closeParenToken:TokenInfo, expr:TExpr):TExpr;
 
 	function patternName(nameToken:TokenInfo):TPattern;
 }
 
 typedef CommaSeparated<T> = Null<{head:T, tail:Array<{comma:TokenInfo, value:T}>}>;
+
+typedef FunctionArg<TPattern> = {
+	var pattern:TPattern;
+}

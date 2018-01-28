@@ -26,8 +26,18 @@ enum Expr {
 	EContinue;
 	EBlock(exprs:Array<Expr>);
 	EVar(pattern:Pattern, value:Expr);
+	EFun(name:Null<String>, fun:Function);
 }
 
 enum Pattern {
 	PName(name:String);
+}
+
+typedef Function = {
+	var args:Array<FunctionArg>;
+	var body:Expr;
+}
+
+typedef FunctionArg = {
+	var pattern:Pattern;
 }
